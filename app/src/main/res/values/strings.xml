@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Weather Application</string>
+    <string name="open_view_pager">Open View Pager</string>
+    <string name="open_recycler_view">Open Recycler View</string>
+</resources>

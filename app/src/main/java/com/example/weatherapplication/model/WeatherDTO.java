@@ -1,6 +1,8 @@
 package com.example.weatherapplication.model;
 
+import com.example.weatherapplication.constants.StringConstants;
 import com.example.weatherapplication.utils.StringUtils;
+import com.example.weatherapplication.utils.WeatherUtil;
 
 
 public class WeatherDTO {
@@ -8,7 +10,7 @@ public class WeatherDTO {
     private String city;
 
 
-    private Double temperature;
+    private String temperature;
 
     private String weatherDesc;
 
@@ -27,7 +29,7 @@ public class WeatherDTO {
     public WeatherDTO() {
         this.city = "Loading data....";
         this.weatherDesc = "Loading data....";
-        this.temperature = new Double(0);
+        this.temperature = "Loading data....";
         this.imgURL = null;
     }
 
@@ -46,11 +48,11 @@ public class WeatherDTO {
         this.city = city;
     }
 
-    public Double getTemperature() {
+    public String getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(Double temperature) {
+    public void setTemperature(String temperature) {
         this.temperature = temperature;
     }
 
@@ -66,7 +68,7 @@ public class WeatherDTO {
 
         private String city;
 
-        private Double temperature;
+        private String temperature;
 
         private String weatherDesc;
 
@@ -81,7 +83,7 @@ public class WeatherDTO {
         }
 
         public Builder setImgURL(String imgURL) {
-            this.imgURL = String.format("http://openweathermap.org/img/w/%s.png",imgURL);
+            this.imgURL = String.format(StringConstants.IMAGE_API_URL,imgURL);
             return this;
         }
 
@@ -94,12 +96,12 @@ public class WeatherDTO {
             return this;
         }
 
-        public Double getTemperature() {
+        public String getTemperature() {
             return temperature;
         }
 
         public Builder setTemperature(Double temperature) {
-            this.temperature = temperature;
+            this.temperature = String.format("%s%sC", String.valueOf(temperature.intValue()), (char) 0x00B0);
             return this;
         }
 
@@ -109,12 +111,23 @@ public class WeatherDTO {
 
         public Builder setWeatherDesc(String weatherDesc) {
 
-            this.weatherDesc = StringUtils.capitalize(weatherDesc);
+            this.weatherDesc = StringUtils.capitalizeWords(weatherDesc);
             return this;
         }
 
         public WeatherDTO create() {
             return new WeatherDTO(this);
+        }
+
+        public Builder buildWithWeatherResponse(WeatherResponse weatherResponse) {
+            this.setWeatherDesc(weatherResponse.weatherList.get(0).description).
+                    setCity(weatherResponse.name).
+                    setTemperature(WeatherUtil.getTemperatureInCelcius(
+                            weatherResponse.main.temp
+                    )).
+                    setImgURL(weatherResponse.weatherList.get(0).icon);
+            return this;
+
         }
 
     }

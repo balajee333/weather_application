@@ -9,31 +9,31 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import com.example.weatherapplication.BR;
-import com.example.weatherapplication.adapter.WeatherViewPagerAdapter;
 import com.example.weatherapplication.constants.StringConstants;
 import com.example.weatherapplication.model.WeatherDTO;
-import com.example.weatherapplication.model.WeatherInfoResponse;
-import com.example.weatherapplication.network.NetworkFactory;
-import com.example.weatherapplication.service.WeatherService;
-import com.example.weatherapplication.utils.WeatherUtil;
+import com.example.weatherapplication.model.WeatherResponse;
+import com.example.weatherapplication.network.provider.WeatherServiceProvider;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import javax.inject.Inject;
+
+import io.reactivex.functions.Consumer;
 
 public class WeatherViewModel extends BaseObservable implements LifecycleObserver {
 
     private static final String TAG = "WeatherViewModel";
 
     private WeatherDTO weatherDTO;
-    private WeatherService weatherService;
     private List<String> cityList;
-    private ObservableField<WeatherDTO> weatherDTOOb = new ObservableField<WeatherDTO>();
+    private ObservableField<WeatherDTO> weatherData = new ObservableField<WeatherDTO>();
 
+    @Inject
+    WeatherServiceProvider weatherServiceProvider;
+
+    @Inject
     public WeatherViewModel() {
-        weatherDTOOb.set(new WeatherDTO());
+        weatherData.set(new WeatherDTO());
         this.cityList = StringConstants.getCities();
     }
 
@@ -44,43 +44,39 @@ public class WeatherViewModel extends BaseObservable implements LifecycleObserve
     }
 
     public String getCity(){
-        return this.weatherDTOOb.get().getCity();
+        return this.weatherData.get().getCity();
     }
 
     public String getTemperature(){
-        return String.format("%s%sC", String.valueOf(weatherDTOOb.get().getTemperature().intValue()), (char) 0x00B0);
+        return weatherData.get().getTemperature();
     }
 
     public String getWeatherDesc(){
-        return this.weatherDTOOb.get().getWeatherDesc();
+        return this.weatherData.get().getWeatherDesc();
     }
 
     public String getImageURL() {
-        return this.weatherDTOOb.get().getImgURL();
+        return this.weatherData.get().getImgURL();
     }
     
+
     public void updateWeatherData(int position) {
 
-        weatherService = NetworkFactory.getWeatherAPIClient().create(WeatherService.class);
-        Call<WeatherInfoResponse> weatherInfoCall = weatherService.getWeatherForCity(this.cityList.get(position));
-        weatherInfoCall.enqueue(new Callback<WeatherInfoResponse>() {
+        weatherServiceProvider.getWeatherForCity(this.cityList.get(position)).subscribe(new Consumer<WeatherResponse>() {
+
             @Override
-            public void onResponse(Call<WeatherInfoResponse> call, Response<WeatherInfoResponse> response) {
-                WeatherInfoResponse weatherInfoResponse = response.body();
-                weatherDTO = new WeatherDTO.Builder().setWeatherDesc(weatherInfoResponse.weatherList.get(0).description).
-                        setCity(weatherInfoResponse.name).
-                        setTemperature(WeatherUtil.getTemperatureInCelcius(
-                                weatherInfoResponse.main.temp
-                        )).
-                        setImgURL(weatherInfoResponse.weatherList.get(0).icon).create();
-                weatherDTOOb.set(weatherDTO);
+            public void accept(WeatherResponse weatherResponse) throws Exception {
+                weatherDTO = new WeatherDTO.Builder().buildWithWeatherResponse(weatherResponse).create();
+                weatherData.set(weatherDTO);
                 notifyPropertyChanged(BR._all);
             }
-
+        }, new Consumer<Throwable>() {
             @Override
-            public void onFailure(Call<WeatherInfoResponse> call, Throwable t) {
-
+            public void accept(Throwable throwable) throws Exception {
+                Log.i(TAG, "Error loading data ");
             }
         });
     }
+
+    
 }

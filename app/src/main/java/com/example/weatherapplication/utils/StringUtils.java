@@ -2,7 +2,7 @@ package com.example.weatherapplication.utils;
 
 public class StringUtils {
 
-    public static String capitalize(final String line) {
+    public static String capitalizeWords(final String line) {
         String[] words = line.split(" ");
         StringBuffer capitalizedWords = new StringBuffer();
         for(String word : words) {

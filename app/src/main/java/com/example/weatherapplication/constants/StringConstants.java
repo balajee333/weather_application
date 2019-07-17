@@ -13,6 +13,10 @@ public class StringConstants {
     public static final int PREF_MODE_PRIVATE = 1;
     public static final String NA = "NA";//not available
     public static final String WEATHER_DAO = "WEATHER_DAO";
+    public static final String IMAGE_API_URL = "http://openweathermap.org/img/w/%s.png";
+    public static final String BASE_URL = "https://community-open-weather-map.p.rapidapi.com";
+
+
 
     private static List<String> cities = new ArrayList<>();
 

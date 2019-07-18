@@ -1,8 +1,17 @@
 package com.example.weatherapplication.dependecyinjection.module;
 
 
+import android.app.Application;
+import android.content.Context;
+import android.util.Log;
+
+import androidx.room.Room;
+
 import com.example.weatherapplication.constants.StringConstants;
+import com.example.weatherapplication.dependecyinjection.application.WeatherApplication;
 import com.example.weatherapplication.network.service.WeatherService;
+import com.example.weatherapplication.persistance.dao.CityDao;
+import com.example.weatherapplication.persistance.database.WeatherDatabase;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
@@ -22,6 +31,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
 public class WeatherModule {
+
+    private Application application;
+
+    public WeatherModule(Application application) {
+        this.application = application;
+    }
+
+    @Provides
+    @Singleton
+    Application providesApplication() {
+        return application;
+    }
 
     @Singleton
     @Provides
@@ -86,6 +107,19 @@ public class WeatherModule {
     @Provides
     RxJava2CallAdapterFactory provideRxJava2CallAdapterFactory() {
         return RxJava2CallAdapterFactory.create();
+    }
+
+
+    @Provides
+    @Singleton
+    WeatherDatabase provideWeatherDatabase(Application application) {
+        return Room.databaseBuilder(application.getApplicationContext(),WeatherDatabase.class, StringConstants.DB_NAME).build();
+    }
+
+    @Provides
+    @Singleton
+    CityDao provideDao(WeatherDatabase weatherDatabase) {
+        return weatherDatabase.getCityDao();
     }
 
 }

@@ -5,6 +5,7 @@ import android.app.Application;
 
 import com.example.weatherapplication.dependecyinjection.component.AppComponent;
 import com.example.weatherapplication.dependecyinjection.component.DaggerAppComponent;
+import com.example.weatherapplication.dependecyinjection.module.WeatherModule;
 
 import javax.inject.Inject;
 
@@ -13,6 +14,11 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 
 public class WeatherApplication extends Application implements HasActivityInjector {
+
+    @Inject
+    public WeatherApplication() {
+
+    }
 
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
@@ -25,7 +31,7 @@ public class WeatherApplication extends Application implements HasActivityInject
     @Override
     public void onCreate() {
         super.onCreate();
-        AppComponent appComponent = DaggerAppComponent.create();
+        AppComponent appComponent = DaggerAppComponent.builder().weatherModule(new WeatherModule(this)).build();
         appComponent.inject(this);
     }
 }

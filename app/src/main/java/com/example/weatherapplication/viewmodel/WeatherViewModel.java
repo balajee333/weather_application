@@ -13,6 +13,7 @@ import com.example.weatherapplication.constants.StringConstants;
 import com.example.weatherapplication.model.WeatherDTO;
 import com.example.weatherapplication.model.WeatherResponse;
 import com.example.weatherapplication.network.provider.WeatherServiceProvider;
+import com.example.weatherapplication.persistance.database.WeatherDatabase;
 
 import java.util.List;
 
@@ -40,6 +41,8 @@ public class WeatherViewModel extends BaseObservable implements LifecycleObserve
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     public void onCreate() {
+        
+
         updateWeatherData(0);
     }
 

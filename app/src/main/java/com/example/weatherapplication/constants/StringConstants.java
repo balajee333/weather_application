@@ -15,6 +15,7 @@ public class StringConstants {
     public static final String WEATHER_DAO = "WEATHER_DAO";
     public static final String IMAGE_API_URL = "http://openweathermap.org/img/w/%s.png";
     public static final String BASE_URL = "https://community-open-weather-map.p.rapidapi.com";
+    public static final String DB_NAME = "weather_db";
 
 
 

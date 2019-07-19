@@ -23,8 +23,4 @@ public abstract class WeatherDatabase extends RoomDatabase {
 
     public abstract CityDao getCityDao();
 
-
-    public static WeatherDatabase getWeatherDatabase(final Context context) {
-        return Room.databaseBuilder(context,WeatherDatabase.class, StringConstants.DB_NAME).build();
-    }
 }

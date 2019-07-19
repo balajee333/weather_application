@@ -11,14 +11,24 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.weatherapplication.constants.StringConstants;
 import com.example.weatherapplication.databinding.WeatherInfoItemBinding;
+import com.example.weatherapplication.persistance.entity.City;
+import com.example.weatherapplication.persistance.repo.CityRepo;
 import com.example.weatherapplication.viewmodel.WeatherViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
 
 public class WeatherViewPagerAdapter extends PagerAdapter {
 
 
+    @Inject
+    CityRepo cityRepo;
+
     private List<String> cityList = StringConstants.getCities();
+
     private WeatherViewModel weatherViewModel;
 
     private static final String TAG = "WeatherViewPagerAdapter";

@@ -7,8 +7,10 @@ import androidx.databinding.Bindable;
 
 import com.example.weatherapplication.persistance.dao.CityDao;
 import com.example.weatherapplication.persistance.entity.City;
+import com.example.weatherapplication.persistance.repo.CityRepo;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -24,7 +26,7 @@ public class AddCityViewModel extends BaseObservable {
     }
 
     @Inject
-    CityDao cityDao;
+    CityRepo cityRepo;
 
     @Bindable
     public String getCityName() {
@@ -32,18 +34,32 @@ public class AddCityViewModel extends BaseObservable {
     }
 
     public void setCityName(String cityName) {
-        Log.i(TAG, "setCityName: ");
         this.cityName = cityName;
     }
 
     public void addCity() {
         Log.i(TAG, "addCity: "+this.cityName);
         //adding city
-        City newCity = new City(this.cityName);
-        cityDao.insertCity(newCity);
-        Log.i(TAG, "addCity: added");
-        List<City> cities = cityDao.getAllCities();
-        for(City city : cities)
-            Log.i(TAG, "City name = "+ city.getName());
+        /*City newCity = new City(this.cityName);
+        try {
+            Long cityId = cityRepo.addCity(newCity);
+            Log.i(TAG, "addCity: added"+cityId);
+        } catch (ExecutionException | InterruptedException e) {
+            Log.i(TAG, "addCity: "+e.getLocalizedMessage());
+        }*/
+
+
+        List<City> cities = null;
+        try {
+            cities = cityRepo.getAllCities();
+            Log.i(TAG, "addCity: "+cities);
+            for(City city : cities)
+                Log.i(TAG, "City name = "+ city.getName());
+        } catch (ExecutionException | InterruptedException e) {
+            Log.i(TAG, "addCity: "+e.getLocalizedMessage());
+        }
+
+
+
     }
 }

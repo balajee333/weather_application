@@ -15,6 +15,6 @@ public interface CityDao {
     List<City> getAllCities();
 
     @Insert
-    void insertCity(City city);
+    Long insertCity(City city);
 
 }

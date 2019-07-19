@@ -14,8 +14,12 @@ import com.example.weatherapplication.model.WeatherDTO;
 import com.example.weatherapplication.model.WeatherResponse;
 import com.example.weatherapplication.network.provider.WeatherServiceProvider;
 import com.example.weatherapplication.persistance.database.WeatherDatabase;
+import com.example.weatherapplication.persistance.entity.City;
+import com.example.weatherapplication.persistance.repo.CityRepo;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -26,24 +30,36 @@ public class WeatherViewModel extends BaseObservable implements LifecycleObserve
     private static final String TAG = "WeatherViewModel";
 
     private WeatherDTO weatherDTO;
-    private List<String> cityList;
+    private List<String> cityList = new ArrayList<>();
     private ObservableField<WeatherDTO> weatherData = new ObservableField<WeatherDTO>();
 
     @Inject
     WeatherServiceProvider weatherServiceProvider;
 
     @Inject
+    CityRepo cityRepo;
+
+    @Inject
     public WeatherViewModel() {
         weatherData.set(new WeatherDTO());
-        this.cityList = StringConstants.getCities();
     }
-
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     public void onCreate() {
-        
-
+        loadCities();
         updateWeatherData(0);
+    }
+
+    private void loadCities() {
+        try {
+            List<City> cities = cityRepo.getAllCities();
+            for(City city : cities) {
+                this.cityList.add(city.getName());
+            }
+        } catch (ExecutionException|InterruptedException e) {
+            Log.i(TAG, "loadCities: Error"+e.getLocalizedMessage());
+        }
+        Log.i(TAG, "loadCities: size = "+this.cityList.size());
     }
 
     public String getCity(){

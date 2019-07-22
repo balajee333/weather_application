@@ -17,10 +17,6 @@ import com.example.weatherapplication.persistance.entity.City;
 public abstract class WeatherDatabase extends RoomDatabase {
 
 
-
-    private static WeatherDatabase weatherDatabase;
-
-
     public abstract CityDao getCityDao();
 
 }

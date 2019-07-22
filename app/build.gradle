@@ -63,6 +63,5 @@ dependencies {
     //room - 2.2.0-alpha01 // 2.1.0
     implementation "androidx.room:room-runtime:2.1.0"
     annotationProcessor "androidx.room:room-compiler:2.1.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel:2.0.0"
 
 }
